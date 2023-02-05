@@ -3,7 +3,7 @@ import { useResponsiveGraphDims } from "@/hooks/useResponsiveGraphDims";
 import { Co2Data, Day } from "@/types/app";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { curveBasis, line } from "d3-shape";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 const padding = 0;
 const ppmExtent = [310, 425];
 
@@ -24,18 +24,30 @@ export default function Home() {
     getData();
   }, []);
 
-  const xScale = scaleTime()
-    .domain([new Date(2020, 0, 1), new Date(2020, 11, 31)])
-    .range([padding, graphWidth - padding]);
+  const xScale = useMemo(
+    () =>
+      scaleTime()
+        .domain([new Date(2020, 0, 1), new Date(2020, 11, 31)])
+        .range([padding, graphWidth - padding]),
+    [graphWidth]
+  );
 
-  const yScale = scaleLinear()
-    .domain(ppmExtent)
-    .range([graphHeight - padding, padding]);
+  const yScale = useMemo(
+    () =>
+      scaleLinear()
+        .domain(ppmExtent)
+        .range([graphHeight - padding, padding]),
+    [graphHeight]
+  );
 
-  const lineGraphLine = line<Day>()
-    .x((d) => xScale(new Date(d.date)))
-    .y((d) => yScale(d.value))
-    .curve(curveBasis);
+  const lineGraphLine = useMemo(
+    () =>
+      line<Day>()
+        .x((d) => xScale(new Date(d.date)))
+        .y((d) => yScale(d.value))
+        .curve(curveBasis),
+    [xScale, yScale]
+  );
 
   if (loading) return <div />;
   return (
