@@ -49,7 +49,7 @@ export const ClimateGraph = ({ data }: Props) => {
         onMouseEnter={mouseEnter}
         onMouseLeave={mouseLeave}
       >
-        <g onMouseMove={(e) => mouseOver(e)}>
+        <g>
           {data.map(({ year, values }) => (
             <path
               d={lineGraphLine(values) || undefined}
