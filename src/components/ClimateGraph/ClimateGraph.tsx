@@ -1,8 +1,9 @@
 import { useResponsiveGraphDims } from "@/hooks/useResponsiveGraphDims";
 import { Co2Data, Day } from "@/types/app";
+import classNames from "classnames";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { curveBasis, line } from "d3-shape";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 const padding = 0;
 const ppmExtent = [312, 423];
 
@@ -11,6 +12,10 @@ interface Props {
 }
 
 export const ClimateGraph = ({ data }: Props) => {
+  const [hovered, setHovered] = useState(false);
+  const [tooltipData, setTooltipData] = useState(
+    {} as { x: number; y: number }
+  );
   const { ref, graphWidth, graphHeight } = useResponsiveGraphDims();
   const xScale = useMemo(
     () =>
@@ -31,17 +36,38 @@ export const ClimateGraph = ({ data }: Props) => {
         .curve(curveBasis),
     [xScale, yScale]
   );
+
+  const mouseEnter = () => setHovered(true);
+  const mouseLeave = () => setHovered(false);
+  const mouseOver = (e: MouseEvent) =>
+    setTooltipData({ x: e.offsetX, y: e.offsetY });
   return (
-    <section ref={ref} className="flex-grow">
-      <svg height={graphHeight} width={graphWidth}>
-        {data.map(({ year, values }) => (
-          <path
-            d={lineGraphLine(values) || undefined}
-            key={year}
-            className="fill-none stroke stroke-gray-100"
-          />
-        ))}
+    <section ref={ref} className="flex-grow relative">
+      <svg
+        height={graphHeight}
+        width={graphWidth}
+        onMouseEnter={mouseEnter}
+        onMouseLeave={mouseLeave}
+      >
+        <g onMouseMove={(e) => mouseOver(e)}>
+          {data.map(({ year, values }) => (
+            <path
+              d={lineGraphLine(values) || undefined}
+              key={year}
+              className="fill-none stroke stroke-gray-100"
+            />
+          ))}
+        </g>
       </svg>
+      <div
+        className={classNames("absolute bg-white text-black p-2 rounded-md", {
+          "opacity-100": hovered,
+          "opacity-0 hidden": !hovered,
+        })}
+        style={{ top: tooltipData.y, left: tooltipData.x }}
+      >
+        suh
+      </div>
     </section>
   );
 };

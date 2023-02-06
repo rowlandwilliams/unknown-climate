@@ -2,8 +2,6 @@
 import { ClimateGraph } from "@/components/ClimateGraph/ClimateGraph";
 import { Co2Data } from "@/types/app";
 import { useEffect, useState } from "react";
-const padding = 0;
-const ppmExtent = [312, 423];
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
