@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 const S3 = new AWS.S3({
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY as string,
+    accessKeyId: process.env.ACCESS_KEY as string,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
   },
 });
