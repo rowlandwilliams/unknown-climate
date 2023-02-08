@@ -1,27 +1,26 @@
-import { useResponsiveGraphDims } from "@/hooks/useResponsiveGraphDims";
 import { Co2Data, Day } from "@/types/app";
 import classNames from "classnames";
 import { scaleLinear, scaleTime } from "d3-scale";
 import { curveBasis, line } from "d3-shape";
 import { useMemo, useState } from "react";
-const padding = 0;
 const ppmExtent = [312, 423];
 
 interface Props {
   data: Co2Data[];
+  graphWidth: number;
+  graphHeight: number;
 }
 
-export const ClimateGraph = ({ data }: Props) => {
+export const ClimateGraph = ({ data, graphWidth, graphHeight }: Props) => {
   const [hovered, setHovered] = useState(false);
   const [tooltipData, setTooltipData] = useState(
     {} as { x: number; y: number }
   );
-  const { ref, graphWidth, graphHeight } = useResponsiveGraphDims();
   const xScale = useMemo(
     () =>
       scaleTime()
         .domain([new Date(2020, 0, 1), new Date(2020, 11, 31)])
-        .range([padding, graphWidth - padding]),
+        .range([0, graphWidth]),
     [graphWidth]
   );
   const yScale = useMemo(
@@ -41,8 +40,9 @@ export const ClimateGraph = ({ data }: Props) => {
   const mouseLeave = () => setHovered(false);
   const mouseOver = (e: MouseEvent) =>
     setTooltipData({ x: e.offsetX, y: e.offsetY });
+
   return (
-    <section ref={ref} className="flex-grow relative">
+    <>
       <svg
         height={graphHeight}
         width={graphWidth}
@@ -68,6 +68,6 @@ export const ClimateGraph = ({ data }: Props) => {
       >
         suh
       </div>
-    </section>
+    </>
   );
 };
